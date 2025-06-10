@@ -1,7 +1,11 @@
 // src/context/AuthProvider.js
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../api/axios.js";
 import { AuthContext } from "./AuthContext"; // ✅ Import the context
+
+
+// Load base API URL from environment or fallback to localhost
+const VITE_API_URL =  import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

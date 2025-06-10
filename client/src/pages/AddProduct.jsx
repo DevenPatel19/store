@@ -1,8 +1,12 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useContext } from "react";
+import axios from "../api/axios.js";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext.jsx";
 
 const AddProduct = () => {
+  const { user } = useContext(AuthContext); // Get user context to conditionally render if needed
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     sku: [""],
@@ -16,61 +20,56 @@ const AddProduct = () => {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSkuChange = (index, value) => {
-    const newSkus = [...formData.sku];
-    newSkus[index] = value;
-    handleInputChange("sku", newSkus);
-  };
-
-  const addSku = () => {
-    const last = formData.sku[formData.sku.length - 1];
-    if (last.trim() !== "") {
-      setError("");
-      handleInputChange("sku", [...formData.sku, ""]);
-    } else {
-      setError("Please fill in the last SKU before adding a new one");
-    }
-  };
-
-  const removeSku = (index) => {
-    if (formData.sku.length > 1) {
-      const newSkus = formData.sku.filter((_, i) => i !== index);
-      handleInputChange("sku", newSkus);
-    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+     try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      }
 
-    try {
-      await axios.post("/api/products", {
+      const payload = {
         ...formData,
-        sku: formData.sku.filter((s) => s.trim() !== ""),
+        sku: formData.sku.trim().toLowerCase(),
         price: Number(formData.price),
         quantity: Number(formData.quantity),
         threshold: Number(formData.threshold),
-      });
+      }; 
+
+
+      await axios.post("/api/products", payload);
       navigate("/");
     } catch (err) {
       console.error(err);
-      setError("Failed to add product");
+      setError(
+        err.response?.data?.message ||
+          "Failed to add product. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  if (!user) {
+    return (
+      <div className="text-center text-red-600 font-medium mt-10">
+        You must be logged in to add a product.
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold">Add Product</h1>
+      <h1 className="text-2xl font-bold mb-4">Add Product</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Name */}
         <div>
           <label className="block text-gray-700">Product Name</label>
           <input
@@ -82,38 +81,19 @@ const AddProduct = () => {
           />
         </div>
 
+        {/* SKUs */}
         <div>
-          <label className="block text-gray-700">SKU(s)</label>
-          {formData.sku.map((value, index) => (
-            <div key={index}>
-              <input
-                type="text"
-                value={value}
-                onChange={(e) => handleSkuChange(index, e.target.value)}
-                className="w-full p-2 border rounded"
-                placeholder={`SKU ${index + 1}`}
-                required
-              />
-              {formData.sku.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeSku(index)}
-                  className="text-red-600 border border-red-600 rounded px-3 py-1 mt-2"
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addSku}
-            className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mt-2"
-          >
-            Add SKU
-          </button>
+          <label className="block text-gray-700">SKU</label>
+          <input
+            type="text"
+            value={formData.sku}
+            onChange={(e) => handleInputChange("sku", e.target.value)}
+            className="w-full p-2 border rounded"
+            required
+          />
         </div>
 
+        {/* Barcode */}
         <div>
           <label className="block text-gray-700">Barcode</label>
           <input
@@ -124,6 +104,7 @@ const AddProduct = () => {
           />
         </div>
 
+        {/* Quantity */}
         <div>
           <label className="block text-gray-700">Quantity</label>
           <input
@@ -136,6 +117,7 @@ const AddProduct = () => {
           />
         </div>
 
+        {/* Threshold */}
         <div>
           <label className="block text-gray-700">Low Stock Threshold</label>
           <input
@@ -147,6 +129,7 @@ const AddProduct = () => {
           />
         </div>
 
+        {/* Price */}
         <div>
           <label className="block text-gray-700">Price ($)</label>
           <input
@@ -159,6 +142,7 @@ const AddProduct = () => {
           />
         </div>
 
+        {/* Category */}
         <div>
           <label className="block text-gray-700">Category</label>
           <input
@@ -169,6 +153,7 @@ const AddProduct = () => {
           />
         </div>
 
+        {/* Photo URL */}
         <div>
           <label className="block text-gray-700">Photo URL</label>
           <input
@@ -179,8 +164,10 @@ const AddProduct = () => {
           />
         </div>
 
+        {/* Error Message */}
         {error && <p className="text-red-600">{error}</p>}
 
+        {/* Submit Button */}
         <button
           className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 ${
             loading ? "opacity-50 cursor-not-allowed" : ""

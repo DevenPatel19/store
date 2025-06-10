@@ -24,7 +24,7 @@ const Navbar = () => {
               <div >
                 Hello, {user.username}!
               </div>
-              <Link to="/addProducte">
+              <Link to="/addProduct">
                 <button>Add Product</button>
               </Link>
 
