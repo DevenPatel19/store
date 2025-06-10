@@ -16,7 +16,7 @@ const Navbar = () => {
     <nav className='bg-white shadow-md p-4'>
         <div className='max-w-7xl mx-auto flex justify-between items-center'>
             <Link to='/'>
-              <h1>Recipe</h1>
+              <h1>Product</h1>
             </Link>
             <div className='flex gap-x-4'>
              {user ? (
@@ -24,8 +24,8 @@ const Navbar = () => {
               <div >
                 Hello, {user.username}!
               </div>
-              <Link to="/addRecipe">
-                <button>Add Recipe</button>
+              <Link to="/addProducte">
+                <button>Add Product</button>
               </Link>
 
               <button 

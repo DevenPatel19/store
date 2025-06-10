@@ -4,7 +4,7 @@ import { AuthProvider } from "./context/AuthProvider.jsx";
 import Home from "./pages/Home";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
-import AddRecipe from "./pages/AddRecipe.jsx";
+import AddProduct from "./pages/AddProduct.jsx";
 
 
 function App() {
@@ -15,7 +15,8 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route path="/addrecipe" element={<AddRecipe />} />
+        <Route path="/addProducte" element={<AddProduct />} 
+        />
         
         
         
