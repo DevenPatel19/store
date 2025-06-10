@@ -1,11 +1,12 @@
 import express from "express";
 import Product from "../models/Product.js";
 import { protect } from "../middleware/auth.js";
+import { authorizeRoles } from "../middleware/role.js";
 
 const router = express.Router();
 
 // Create Product
-router.post("/", protect, async (req, res) => {
+router.post("/", protect, authorizeRoles("Staff", "Manager", "Admin"), async (req, res) => {
   const { name, sku, barcodes, quantity, price, category, photoUrl } =
     req.body;
 
@@ -26,10 +27,11 @@ router.post("/", protect, async (req, res) => {
       sku,
       barcodes,
       category,
-      cookcategoryingTime,
+      category,
       photoUrl,
       quantity,
       price,
+      createdBy: req.user._id,  // set ownership here
     });
     res.status(201).json(product);
   } catch (err) {
@@ -38,7 +40,7 @@ router.post("/", protect, async (req, res) => {
 });
 
 // Get Product
-router.get("/", async (req, res) => {
+router.get("/",authorizeRoles("Staff", "Manager", "Admin", "Viewer"), async (req, res) => {
   const { category } = req.query;
   try {
     const query = category ? { category } : {};
@@ -50,7 +52,7 @@ router.get("/", async (req, res) => {
 });
 
 // Get a Product
-router.get("/:id", async (req, res) => {
+router.get("/:id", authorizeRoles("Viewer", "Staff", "Manager", "Admin"), async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {
@@ -63,7 +65,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Update a Product
-router.put("/:id", protect, async (req, res) => {
+router.put("/:id", protect, authorizeRoles("Staff", "Manager", "Admin"), async (req, res) => {
   const { name, sku, barcodes, quantity, price, category, photoUrl } =
     req.body;
 
@@ -83,6 +85,7 @@ router.put("/:id", protect, async (req, res) => {
     product.photoUrl = photoUrl || recipe.photoUrl;
     product.quantity = quantity || product.quantity;
     product.price = price || product.price;
+    
 
     const updatedProduct = await product.save();
     res.json(updatedProduct);
@@ -92,7 +95,7 @@ router.put("/:id", protect, async (req, res) => {
 });
 
 // Delete a Product
-router.delete("/:id", protect, async (req, res) => {
+router.delete("/:id", protect, authorizeRoles("Staff", "Manager", "Admin"), async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {

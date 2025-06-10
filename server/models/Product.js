@@ -7,14 +7,14 @@ const productSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    sku: [
+    sku:        // Was in an array however that impedes uniueness checking
       {
         type: String,
         required: true,
         unique: true,
         lowercase: true,
       },
-    ],
+    
     barcodes: {
       type: String,
       required: false,  // optional if based on SKU
@@ -44,6 +44,11 @@ const productSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    }
   },
   {
     timestamps: true, // AUTO createdAt & updatedAt logged
