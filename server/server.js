@@ -37,6 +37,7 @@ app.use("/api/products", productRoutes);
 
 app.listen(PORT, () => {
     connectDB();
+    
     console.log(`🚀🚀🚀🚀 Server started at port ${PORT}  🦄🦄🦄🦄`);
     })
 

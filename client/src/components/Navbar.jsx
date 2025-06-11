@@ -2,9 +2,15 @@ import React, { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
+// Environment variables must use REACT_APP_ prefix
+const businessName = import.meta.env.VITE_BUS_NAME || 'MyBusiness'; // Fallback name
+
+
+
+
 const Navbar = () => {
   const {user, logout} = useContext(AuthContext);
-
+  
   const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -16,7 +22,7 @@ const Navbar = () => {
     <nav className='bg-white shadow-md p-4'>
         <div className='max-w-7xl mx-auto flex justify-between items-center'>
             <Link to='/'>
-              <h1>DashBoard</h1>
+              <h1>{businessName} Navbar</h1>
             </Link>
             <div className='flex gap-x-4'>
              {user ? (
