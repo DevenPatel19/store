@@ -5,3 +5,7 @@ export default function EditProduct() {
   const { id } = useParams();
   return <ProductForm mode="edit" id={id} />;
 }
+
+
+
+
