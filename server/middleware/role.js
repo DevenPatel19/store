@@ -5,7 +5,7 @@ export const authorizeRoles = (...allowedRoles) => {
       return res.status(401).json({ message: "Not authorized" });
     }
 
-    const userRoles = req.user.roles || [];
+    const userRoles = req.user.roles || [""];
 
     // Check if user has at least one role from allowedRoles
     const hasRole = userRoles.some(role => allowedRoles.includes(role));
