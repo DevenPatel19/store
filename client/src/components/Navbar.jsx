@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 // Environment variables must use REACT_APP_ prefix
-const businessName = import.meta.env.VITE_BUS_NAME || 'MyBusiness'; // Fallback name
+const businessName = import.meta.env.VITE_BUS_NAME  || 'MyBusiness'; // Fallback name
 
 
 
