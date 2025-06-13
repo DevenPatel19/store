@@ -29,6 +29,17 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    // NEW: Business association
+    business: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Business"
+    },
+    // NEW: Profile information
+    profile: {
+      firstName: { type: String, trim: true },
+      lastName: { type: String, trim: true },
+      phone: { type: String, trim: true }
     }
   },
   {
