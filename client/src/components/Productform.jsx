@@ -20,6 +20,8 @@ const ProductForm = ({ mode = "add", id = null }) => {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(""); // New state for image preview
+  const [imageError, setImageError] = useState(false); // New state for image loading errors
 
   // Fetch product data when editing
   useEffect(() => {
@@ -42,6 +44,11 @@ const ProductForm = ({ mode = "add", id = null }) => {
             category: data.category,
             photoUrl: data.photoUrl,
           });
+
+          // Set initial image preview if photoUrl exists
+          if (data.photoUrl) {
+            setImagePreview(data.photoUrl);
+          }
         } catch (err) {
           console.error("Failed to load product:", err);
           setError("Unable to load product data.");
@@ -53,7 +60,16 @@ const ProductForm = ({ mode = "add", id = null }) => {
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+
+   // Update image preview when photo URL changes
+    if (field === "photoUrl") {
+      setImagePreview(value);
+      setImageError(false); // Reset error state when URL changes
+    }
   };
+
+  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91,6 +107,11 @@ const ProductForm = ({ mode = "add", id = null }) => {
     }
   };
 
+// Handle image loading errors
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   if (!user) {
     return (
       <div className="text-center text-red-600 font-medium mt-10">
@@ -126,6 +147,30 @@ const ProductForm = ({ mode = "add", id = null }) => {
               required={required}
               min={type === "number" ? 0 : undefined}
             />
+
+            {/* Image Preview - only for photoUrl field */}
+            {field === "photoUrl" && imagePreview && (
+              <div className="mt-3">
+                <p className="text-sm text-gray-600 mb-1">Image Preview:</p>
+                <div className="border rounded-md p-2 bg-gray-50 flex justify-center">
+                  {imageError ? (
+                    <div className="text-center py-8 text-red-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      Could not load image. Please check the URL.
+                    </div>
+                  ) : (
+                    <img 
+                      src={imagePreview} 
+                      alt="Product preview" 
+                      className="max-h-40 max-w-full object-contain"
+                      onError={handleImageError}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         ))}
 
