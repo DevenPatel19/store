@@ -64,7 +64,7 @@ router.get('/me', protect, async (req, res) => {
 
 // Generating JWT
 const generateToken = (id) => {
-    return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: "30d"})
+    return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: "15m"})
 }
 
 export default router;
