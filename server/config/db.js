@@ -9,7 +9,7 @@ const dbName = process.env.ATLAS_DB;
 const cluster = process.env.ATLAS_CLUSTER;
 const options = process.env.ATLAS_OPTIONS;
 
-const uri = `mongodb+srv://${dbUser}:${dbPW}@${cluster}.mongodb.net/${dbName}?${options}`;
+const uri = `mongodb+srv://neotact:${dbPW}@${cluster}.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0}`;
 
 export const connectDB = async () => {
   try {
