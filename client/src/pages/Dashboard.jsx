@@ -1,14 +1,19 @@
-import React from 'react'
+import NavbarCustom from "../components/NavbarCustom.jsx"
+import Snapshot from "../components/SnapShot.jsx"
+
+
 
 const Dashboard = () => {
   // const [products, setProducts] = useState([])
 
   return (
-    <div className='max-w-7xl mx-auto p-4'>
-      <div className="card"><div className="card-body"></div></div>
-      <div className="card">box 2</div>
-      <div className="card">box 3</div>
-    </div>
+    
+      <>
+   
+      :
+      <Snapshot></Snapshot>
+      </>
+    
   )
 }
 

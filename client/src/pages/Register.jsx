@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -21,46 +22,53 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Register</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-gray-700">Username</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-          Register
-        </button>
-      </form>
-    </div>
+     <Container className="py-4">
+      <Row className="justify-content-center">
+        <Col xs={12} md={7} lg={6} xl={5}>
+          <h1 className="text-center mb-4">Register</h1>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="formUsername" className="mb-3">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                placeholder="Enter username"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formEmail" className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="Enter email"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formPassword" className="mb-4">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="Enter password"
+              />
+            </Form.Group>
+
+            <div className="d-grid">
+              <Button type="submit" variant="primary">
+                Register
+              </Button>
+            </div>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

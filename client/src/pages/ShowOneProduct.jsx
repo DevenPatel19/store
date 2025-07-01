@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Container, Card, Spinner } from "react-bootstrap";
 
 const ShowOne = () => {
   const [product, setProduct] = useState(null);
@@ -18,26 +19,37 @@ const ShowOne = () => {
   }, [id]);
 
   if (!product) {
-    return <p className="text-center mt-10">Loading...</p>;
+    return (
+      <Container className="d-flex justify-content-center mt-5">
+        <Spinner animation="border" role="status" />
+        <span className="ms-2 align-self-center">Loading...</span>
+      </Container>
+    );
   }
 
   return (
-    <div className="max-w-xl mx-auto p-6 border rounded shadow">
-      <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
-      <p><strong>SKU:</strong> {product.sku}</p>
-      <p><strong>Barcodes:</strong> {product.barcodes}</p>
-      <p><strong>Quantity:</strong> {product.quantity}</p>
-      <p><strong>Low Stock Threshold:</strong> {product.threshold}</p>
-      <p><strong>Price:</strong> ${product.price}</p>
-      <p><strong>Category:</strong> {product.category}</p>
-      {product.photoUrl && (
-        <img
-          src={product.photoUrl}
-          alt={product.name}
-          className="w-full mt-4 border rounded"
-        />
-      )}
-    </div>
+    <Container className="my-5" style={{ maxWidth: "600px" }}>
+      <Card className="shadow-sm">
+        <Card.Body>
+          <Card.Title className="mb-3">{product.name}</Card.Title>
+          <Card.Text><strong>SKU:</strong> {product.sku}</Card.Text>
+          <Card.Text><strong>Barcodes:</strong> {product.barcodes}</Card.Text>
+          <Card.Text><strong>Quantity:</strong> {product.quantity}</Card.Text>
+          <Card.Text><strong>Low Stock Threshold:</strong> {product.threshold}</Card.Text>
+          <Card.Text><strong>Price:</strong> ${product.price}</Card.Text>
+          <Card.Text><strong>Category:</strong> {product.category}</Card.Text>
+          {product.photoUrl && (
+            <Card.Img
+              variant="bottom"
+              src={product.photoUrl}
+              alt={product.name}
+              className="mt-3 rounded"
+              style={{ objectFit: "contain", maxHeight: "300px" }}
+            />
+          )}
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 
