@@ -6,8 +6,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import AddProduct from "./pages/AddProduct.jsx";
 import EditProduct from "./pages/EditProduct.jsx";
-import ShowOne from "./pages/ShowOneProduct.jsx";
-import ShowAll from "./pages/ShowAllProduct.jsx";
+import ShowAllProducts from "./pages/ShowAllProducts.jsx";
 
 
 function App() {
@@ -18,9 +17,9 @@ function App() {
         <Route path='/' element={<Dashboard />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route path="/Product/new" element={<AddProduct />} /> 
-        <Route path="/Product/:id/edit" mode="edit" element={<EditProduct />} />
-        <Route path="/Product/:id" element={<ShowAll />} />
+        <Route path="/products/new" element={<AddProduct />} /> 
+        <Route path="/products/:id/edit" element={<EditProduct />} />
+        <Route path="/products" element={<ShowAllProducts />} />
         
         
         

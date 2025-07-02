@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
-import { Container, Row, Col, Form, Button, Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Alert, Spinner } from "react-bootstrap";
 
-const ProductForm = ({ mode = "add", id = null }) => {
+const ProductForm = ({ mode = "add" }) => {
+  const { id } = useParams(); // 👈 get :id from URL if in edit mode
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -21,8 +22,8 @@ const ProductForm = ({ mode = "add", id = null }) => {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(""); // New state for image preview
-  const [imageError, setImageError] = useState(false); // New state for image loading errors
+  const [imagePreview, setImagePreview] = useState("");
+  const [imageError, setImageError] = useState(false);
 
   // Fetch product data when editing
   useEffect(() => {
@@ -46,7 +47,6 @@ const ProductForm = ({ mode = "add", id = null }) => {
             photoUrl: data.photoUrl,
           });
 
-          // Set initial image preview if photoUrl exists
           if (data.photoUrl) {
             setImagePreview(data.photoUrl);
           }
@@ -62,15 +62,11 @@ const ProductForm = ({ mode = "add", id = null }) => {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-   // Update image preview when photo URL changes
     if (field === "photoUrl") {
       setImagePreview(value);
-      setImageError(false); // Reset error state when URL changes
+      setImageError(false);
     }
   };
-
-  
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -97,7 +93,7 @@ const ProductForm = ({ mode = "add", id = null }) => {
         await axios.post("/api/products", payload);
       }
 
-      navigate("/");
+      navigate("/products");
     } catch (err) {
       console.error("Submit failed:", err);
       setError(
@@ -108,23 +104,21 @@ const ProductForm = ({ mode = "add", id = null }) => {
     }
   };
 
-// Handle image loading errors
   const handleImageError = () => {
     setImageError(true);
   };
 
   if (!user) {
     return (
-      <div className="text-center text-red-600 font-medium mt-10">
+      <div className="text-center text-danger font-weight-bold mt-5">
         You must be logged in to {mode} a product.
       </div>
     );
   }
 
   return (
-     <Container className="py-4">
+    <Container className="py-4">
       <Row className="justify-content-center">
-        {/* md=7 ~ 58% width, close to 3/5 */}
         <Col xs={12} md={7} lg={6} xl={5}>
           <Form onSubmit={handleSubmit}>
             {[
@@ -141,7 +135,7 @@ const ProductForm = ({ mode = "add", id = null }) => {
                 <Form.Label>{label}</Form.Label>
                 <Form.Control
                   type={type}
-                  value={formData[field] || ''}
+                  value={formData[field] || ""}
                   onChange={(e) => handleInputChange(field, e.target.value)}
                   required={required}
                   min={type === "number" ? 0 : undefined}
@@ -163,7 +157,7 @@ const ProductForm = ({ mode = "add", id = null }) => {
                           src={imagePreview}
                           alt="Product preview"
                           className="img-fluid"
-                          style={{ maxHeight: '200px', objectFit: 'contain' }}
+                          style={{ maxHeight: "200px", objectFit: "contain" }}
                           onError={handleImageError}
                         />
                       )}
@@ -173,18 +167,10 @@ const ProductForm = ({ mode = "add", id = null }) => {
               </Form.Group>
             ))}
 
-            {error && (
-              <Alert variant="danger">
-                {error}
-              </Alert>
-            )}
+            {error && <Alert variant="danger">{error}</Alert>}
 
             <div className="d-grid">
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={loading}
-              >
+              <Button type="submit" variant="primary" disabled={loading}>
                 {loading ? (
                   <>
                     <Spinner animation="border" size="sm" className="me-2" />

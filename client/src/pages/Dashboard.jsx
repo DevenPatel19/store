@@ -1,20 +1,27 @@
-import NavbarCustom from "../components/NavbarCustom.jsx"
-import Snapshot from "../components/SnapShot.jsx"
-
-
+// Dashboard.jsx
+import React, { useContext } from "react";
+import { Container, Card } from "react-bootstrap";
+import { AuthContext } from "../context/AuthContext";
+import Snapshot from "../components/Snapshot";
 
 const Dashboard = () => {
-  // const [products, setProducts] = useState([])
+  const { user } = useContext(AuthContext);
 
   return (
-    
-      <>
-   
-      :
-      <Snapshot></Snapshot>
-      </>
-    
-  )
-}
+    <Container className="mt-4">
+      <Card className="p-4 shadow">
+        {user ? (
+          <Snapshot />
+        ) : (
+          <div>
+            <h1>Welcome, Please login.</h1>
+            <span>↗️</span>
 
-export default Dashboard
+          </div>
+        )}
+      </Card>
+    </Container>
+  );
+};
+
+export default Dashboard;

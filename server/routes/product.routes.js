@@ -23,12 +23,14 @@ router.post(
 
 router.get(
   '/',
+  protect,
   authorizeRoles('Viewer', 'Staff', 'Manager', 'Admin'),
   getProducts
 );
 
 router.get(
   '/:id',
+  protect,
   authorizeRoles('Viewer', 'Staff', 'Manager', 'Admin'),
   getProductById
 );

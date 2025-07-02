@@ -50,7 +50,9 @@ const NavbarCustom = () => {
                   </NavDropdown.Item>
                 </NavDropdown>
                 <NavDropdown title="Products" id="basic-nav-dropdown">
-                  <NavDropdown.Item as={Link} to="/Products">View all</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/Products">
+                    View all
+                  </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/Products/new">
                     Add Product
                   </NavDropdown.Item>
