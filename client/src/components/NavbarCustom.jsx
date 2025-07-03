@@ -36,7 +36,7 @@ const NavbarCustom = () => {
                 <NavDropdown title="Customers" id="basic-nav-dropdown">
                   <NavDropdown.Item as={Link} to="/Customers">View all</NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item as={Link} to="/Custpomers/add">
+                  <NavDropdown.Item as={Link} to="/Customers/add">
                     Add New Client
                   </NavDropdown.Item>
                 </NavDropdown>
