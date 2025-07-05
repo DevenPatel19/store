@@ -5,7 +5,8 @@ const customerSchema = new mongoose.Schema(
     business: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Business",
-      required: true
+      require: false
+
     },
     name: {
       type: String,

@@ -3,11 +3,12 @@ import Customer from "../models/Customer.model.js";
 // Create new customer
 export const createCustomer = async (req, res) => {
   try {
-    if (!req.user.business) {
-      return res.status(400).json({ 
-        message: "User is not associated with a business" 
-      });
-    }
+    // Temporarily disable business requirement
+    // if (!req.user.business) {
+    //   return res.status(400).json({ 
+    //     message: "User is not associated with a business" 
+    //   });
+    // }
     
     const { name, contact } = req.body;
     
@@ -19,7 +20,7 @@ export const createCustomer = async (req, res) => {
     
     const customer = await Customer.create({
       ...req.body,
-      business: req.user.business
+      // business: req.user.business
     });
     
     res.status(201).json(customer);
@@ -33,15 +34,17 @@ export const createCustomer = async (req, res) => {
 // Get all customers
 export const getCustomers = async (req, res) => {
   try {
-    if (!req.user.business) {
-      return res.status(400).json({ 
-        message: "User is not associated with a business" 
-      });
-    }
+    // Temporarily disable business requirement
+    // if (!req.user.business) {
+    //   return res.status(400).json({ 
+    //     message: "User is not associated with a business" 
+    //   });
+    // }
     
-    const customers = await Customer.find({ 
-      business: req.user.business 
-    });
+    // const customers = await Customer.find({ 
+    //   business: req.user.business 
+    // });
+    const customers = await Customer.find(); // fetch all customers without business filter
     
     res.json(customers);
   } catch (err) {
@@ -54,16 +57,18 @@ export const getCustomers = async (req, res) => {
 // Get single customer
 export const getCustomerById = async (req, res) => {
   try {
-    if (!req.user.business) {
-      return res.status(400).json({ 
-        message: "User is not associated with a business" 
-      });
-    }
+    // Temporarily disable business requirement
+    // if (!req.user.business) {
+    //   return res.status(400).json({ 
+    //     message: "User is not associated with a business" 
+    //   });
+    // }
     
-    const customer = await Customer.findOne({
-      _id: req.params.id,
-      business: req.user.business
-    });
+    // const customer = await Customer.findOne({
+    //   _id: req.params.id,
+    //   business: req.user.business
+    // });
+    const customer = await Customer.findById(req.params.id);
     
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });
@@ -80,17 +85,20 @@ export const getCustomerById = async (req, res) => {
 // Update customer
 export const updateCustomer = async (req, res) => {
   try {
-    if (!req.user.business) {
-      return res.status(400).json({ 
-        message: "User is not associated with a business" 
-      });
-    }
+    // Temporarily disable business requirement
+    // if (!req.user.business) {
+    //   return res.status(400).json({ 
+    //     message: "User is not associated with a business" 
+    //   });
+    // }
     
-    const customer = await Customer.findOneAndUpdate(
-      { 
-        _id: req.params.id, 
-        business: req.user.business 
-      },
+    // const customer = await Customer.findOneAndUpdate(
+    //   { _id: req.params.id, business: req.user.business },
+    //   req.body,
+    //   { new: true, runValidators: true }
+    // );
+    const customer = await Customer.findByIdAndUpdate(
+      req.params.id,
       req.body,
       { new: true, runValidators: true }
     );
@@ -110,16 +118,18 @@ export const updateCustomer = async (req, res) => {
 // Delete customer
 export const deleteCustomer = async (req, res) => {
   try {
-    if (!req.user.business) {
-      return res.status(400).json({ 
-        message: "User is not associated with a business" 
-      });
-    }
+    // Temporarily disable business requirement
+    // if (!req.user.business) {
+    //   return res.status(400).json({ 
+    //     message: "User is not associated with a business" 
+    //   });
+    // }
     
-    const customer = await Customer.findOneAndDelete({
-      _id: req.params.id,
-      business: req.user.business
-    });
+    // const customer = await Customer.findOneAndDelete({
+    //   _id: req.params.id,
+    //   business: req.user.business
+    // });
+    const customer = await Customer.findByIdAndDelete(req.params.id);
     
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });

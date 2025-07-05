@@ -12,14 +12,19 @@ telephone pole that it is. Catching back up.
  an inventory app so that I could gain confidence... and now I'm lost. I even had a plan. Bakc to the template
  for an 
 
-  -[ ] inventory management system
+  -[x] CRUD inventory management system
   -[ ] a booking system with customer contact database
   -[ ] payment gateway through Stripe API,  as well as retaining the 
-  -[ ] JWT AUTH Reg/Log screen and the 
-  -[ ] Add/Edit same use product form for inventory branch 
+  -[x] JWT AUTH Reg/Log screen and the 
+  -[x] Add/Edit same use product form for inventory branch 
   
   of MVP.
 
 
   ## 06/30
   - Cleaned up setup and update MongoDB connection string format after troubleshooting.
+
+  ## 07/03
+  - Completed and validated function of product management system
+
+  
