@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";  // <-- import useNavigate
 import axios from "../../api/axios";
 import { AuthContext } from "../../context/AuthContext";
 import {
@@ -14,6 +14,7 @@ import {
 
 const ShowAllProducts = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate(); // <-- initialize navigate
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -130,17 +131,26 @@ const ShowAllProducts = () => {
                     Price: ${Number(product.price).toFixed(2)}
                   </Card.Text>
                   <Card.Text>Quantity: {product.quantity}</Card.Text>
+
+                  <Button
+                    variant="info"
+                    className="mb-2"
+                    onClick={() => navigate(`/products/${product._id}`)}
+                  >
+                    View
+                  </Button>
+
                   <Button
                     as={Link}
                     to={`/products/${product._id}/edit`}
                     variant="warning"
-                    className="mt-auto my-2"
+                    className="mb-2"
                   >
                     Edit
                   </Button>
+
                   <Button
                     variant="danger"
-                    className="mt-auto"
                     disabled={isDeleting}
                     onClick={() => handleDelete(product._id)}
                   >
