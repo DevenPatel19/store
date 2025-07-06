@@ -40,7 +40,7 @@ const NavbarCustom = () => {
                     Add New Client
                   </NavDropdown.Item>
                 </NavDropdown>
-                <Nav.Link as={Link} to="/Todo">
+                <Nav.Link as={Link} to="/Tasks">
                   Todo
                 </Nav.Link>
                 <NavDropdown title="Finance" id="basic-nav-dropdown">

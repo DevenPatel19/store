@@ -17,9 +17,12 @@ export const AuthProvider = ({ children }) => {
 
       axios.get("/api/auth/me")
         .then((res) => setUser(res.data))
-        .catch(() => logout());
-    }
-  }, []);
+        .catch((err) => {
+        console.error("Auth check failed:", err.response?.data || err.message);
+        logout();
+      });
+  }
+}, []);
 
   const login = async (email, password) => {
     const res = await axios.post("/api/auth/login", { email, password });

@@ -13,83 +13,32 @@ import CustomerManager from "./pages/Customers/CustomerManager.jsx";
 import ViewCustomer from "./pages/Customers/ViewCustomer.jsx";
 import AddCustomer from "./pages/Customers/AddCustomer.jsx";
 import EditCustomer from "./pages/Customers/EditCustomer.jsx";
+import Kanban from "./pages/Todo/Kanban.jsx";
+
 
 function App() {
   return (
     <AuthProvider>
       <NavbarCustom />
       <Routes>
-        <Route path='/' element={<Dashboard />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
 
         {/* Protect product routes */}
-        <Route
-          path="/products/new"
-          element={
-            <RequireAuth>
-              <AddProduct />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/products/:id/edit"
-          element={
-            <RequireAuth>
-              <EditProduct />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/products/:id"
-          element={
-            <RequireAuth>
-              <ViewProduct />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/products"
-          element={
-            <RequireAuth>
-              <ShowAllProducts />
-            </RequireAuth>
-          }
-        />
+        <Route path='/' element={<RequireAuth><Dashboard /></RequireAuth>} />
+        <Route path="/products/new" element={<RequireAuth> <AddProduct /> </RequireAuth>}/>
+        <Route path="/products/:id/edit" element={<RequireAuth> <EditProduct /> </RequireAuth> }/>
+        <Route path="/products/:id" element={ <RequireAuth> <ViewProduct /> </RequireAuth> }/>
+        <Route path="/products" element={ <RequireAuth> <ShowAllProducts /> </RequireAuth> } />
 
         {/* Protect customer routes */}
-        <Route
-          path="/customers/new"
-          element={
-            <RequireAuth>
-              <AddCustomer />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/customers/:id/edit"
-          element={
-            <RequireAuth>
-              <EditCustomer />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/customers/:id"
-          element={
-            <RequireAuth>
-              <ViewCustomer />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/customers"
-          element={
-            <RequireAuth>
-              <CustomerManager />
-            </RequireAuth>
-          }
-        />
+        <Route path="/customers/new" element={ <RequireAuth> <AddCustomer /> </RequireAuth> } />
+        <Route path="/customers/:id/edit" element={ <RequireAuth> <EditCustomer /> </RequireAuth> } />
+        <Route path="/customers/:id" element={ <RequireAuth> <ViewCustomer /> </RequireAuth> } />
+        <Route path="/customers" element={ <RequireAuth> <CustomerManager /> </RequireAuth> } />
+
+        {/* Protected todo routes */}
+        <Route path="/tasks" element={<RequireAuth> <Kanban /> </RequireAuth>} />
       </Routes>
     </AuthProvider>
   );
