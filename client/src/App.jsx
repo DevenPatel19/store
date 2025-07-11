@@ -19,9 +19,13 @@ import Kanban from "./pages/Todo/Kanban.jsx";
 function App() {
   return (
     <AuthProvider>
-      <NavbarCustom />
+       <div style={{  position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
+              <NavbarCustom />
+      </div>
       <Routes>
         <Route path='/login' element={<Login />} />
+        
+
         <Route path='/register' element={<Register />} />
 
         {/* Protect product routes */}

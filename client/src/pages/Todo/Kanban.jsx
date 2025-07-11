@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+"use client"
+
+import { useState, useEffect, useContext } from "react"
 import {
   DndContext,
   closestCorners,
@@ -8,479 +10,286 @@ import {
   useSensors,
   DragOverlay,
   defaultDropAnimation,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-  horizontalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
-import { FaTrash, FaPlus, FaCheckCircle } from 'react-icons/fa';
-import { AuthContext } from '../../context/AuthProvider';
-import './kanban.css';
-
-// Sortable Column Component
-const SortableColumn = ({ id, title, tasks, isDragging, addTask, deleteTask, onCompleteDay, isSending }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  const [newTaskContent, setNewTaskContent] = useState('');
-
-  const handleAddTask = () => {
-    if (newTaskContent.trim()) {
-      addTask(id, newTaskContent);
-      setNewTaskContent('');
-    }
-  };
-
-  return (
-    <Card 
-      ref={setNodeRef}
-      style={style}
-      className="mb-3 h-100 d-flex flex-column"
-    >
-      <Card.Header 
-        {...attributes}
-        {...listeners}
-        className="d-flex justify-content-between align-items-center cursor-grab"
-      >
-        <h5 className="mb-0">{title}</h5>
-        <span className="badge bg-primary rounded-pill">
-          {tasks.length}
-        </span>
-      </Card.Header>
-      <Card.Body className="p-2 flex-grow-1 d-flex flex-column">
-        <Form className="mb-2 d-flex">
-          <Form.Control
-            type="text"
-            value={newTaskContent}
-            onChange={(e) => setNewTaskContent(e.target.value)}
-            placeholder="Add task..."
-            onKeyDown={(e) => e.key === 'Enter' && handleAddTask()}
-          />
-          <Button 
-            variant="primary" 
-            onClick={handleAddTask}
-            className="ms-1"
-          >
-            <FaPlus />
-          </Button>
-        </Form>
-        
-        <div className="task-list flex-grow-1">
-          <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
-            {tasks.map(task => (
-              <SortableTask 
-                key={task.id} 
-                id={task.id} 
-                task={task} 
-                onDelete={deleteTask}
-              />
-            ))}
-          </SortableContext>
-        </div>
-        
-        {id === 'done' && tasks.length > 0 && (
-          <Button 
-            variant="success" 
-            className="mt-3 w-100"
-            onClick={onCompleteDay}
-            disabled={isSending}
-          >
-            {isSending ? (
-              <Spinner as="span" animation="border" size="sm" />
-            ) : (
-              <>
-                <FaCheckCircle className="me-2" />
-                Done for the Day
-              </>
-            )}
-          </Button>
-        )}
-      </Card.Body>
-    </Card>
-  );
-};
-
-// Sortable Task Component
-const SortableTask = ({ id, task, onDelete }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={`card mb-2 cursor-grab ${isDragging ? 'border-primary border-2' : ''}`}
-      {...attributes}
-      {...listeners}
-    >
-      <div className="card-body p-2 d-flex justify-content-between">
-        <div className="task-content">
-          <p className="mb-0">{task.content}</p>
-          {task.createdAt && (
-            <small className="text-muted">
-              {new Date(task.createdAt).toLocaleString()}
-            </small>
-          )}
-        </div>
-        <Button 
-          variant="link" 
-          className="text-danger p-0 align-self-start"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(id);
-          }}
-        >
-          <FaTrash size={16} />
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-// Task Card Component for Drag Overlay
-const TaskCard = ({ task }) => (
-  <div className="card mb-2">
-    <div className="card-body p-2">
-      <p className="mb-0">{task.content}</p>
-      {task.createdAt && (
-        <small className="text-muted">
-          {new Date(task.createdAt).toLocaleString()}
-        </small>
-      )}
-    </div>
-  </div>
-);
+} from "@dnd-kit/core"
+import { SortableContext, horizontalListSortingStrategy, arrayMove } from "@dnd-kit/sortable"
+import { AuthContext } from "../../context/AuthContext"
+import axios from "../../api/axios"
+import SortableColumn from "../../components/SortableColumn"
+import TaskCard from "../../components/TaskCard"
+import { CheckCircle, AlertCircle, X } from "lucide-react"
 
 const Kanban = () => {
-  const { user } = useContext(AuthContext);
-  const [boardData, setBoardData] = useState(() => {
-    const savedData = localStorage.getItem('kanbanData');
-    if (savedData) return JSON.parse(savedData);
-    
-    return {
-      columns: {
-        'todo': {
-          id: 'todo',
-          title: 'To Do',
-          taskIds: []
-        },
-        'in-progress': {
-          id: 'in-progress',
-          title: 'In Progress',
-          taskIds: []
-        },
-        'done': {
-          id: 'done',
-          title: 'Done',
-          taskIds: []
-        }
-      },
-      tasks: {},
-      columnOrder: ['todo', 'in-progress', 'done']
-    };
-  });
+  const { user } = useContext(AuthContext)
+  const [boardData, setBoardData] = useState({ columns: {}, tasks: {}, columnOrder: [] })
+  const [alert, setAlert] = useState({ show: false, variant: "success", message: "" })
+  const [isSending, setIsSending] = useState(false)
+  const [activeId, setActiveId] = useState(null)
+  const [activeType, setActiveType] = useState(null)
 
-  const [alert, setAlert] = useState({ show: false, variant: 'success', message: '' });
-  const [isSending, setIsSending] = useState(false);
+  const isViewer = user?.roles?.includes("Viewer")
+
+  const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor))
+
+  const dropAnimationConfig = { ...defaultDropAnimation, dragSourceOpacity: 0.5 }
 
   useEffect(() => {
-    localStorage.setItem('kanbanData', JSON.stringify(boardData));
-  }, [boardData]);
-
-  const [activeId, setActiveId] = useState(null);
-  const [activeType, setActiveType] = useState(null);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor)
-  );
-
-  const dropAnimationConfig = {
-    ...defaultDropAnimation,
-    dragSourceOpacity: 0.5,
-  };
-
-  const activeTask = activeType === 'task' ? boardData.tasks[activeId] : null;
-  const activeColumn = activeType === 'column' ? boardData.columns[activeId] : null;
-
-  const addTask = (columnId, content) => {
-    const taskId = `task-${Date.now()}`;
-    setBoardData(prev => ({
-      ...prev,
-      tasks: {
-        ...prev.tasks,
-        [taskId]: { 
-          id: taskId, 
-          content,
-          createdAt: new Date().toISOString()
+    const fetchTasks = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        if (token) {
+          axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
         }
-      },
-      columns: {
-        ...prev.columns,
-        [columnId]: {
-          ...prev.columns[columnId],
-          taskIds: [...prev.columns[columnId].taskIds, taskId]
+        const res = await axios.get("/api/tasks")
+        const columns = {
+          todo: { id: "todo", title: "To Do", taskIds: [] },
+          "in-progress": { id: "in-progress", title: "In Progress", taskIds: [] },
+          done: { id: "done", title: "Done", taskIds: [] },
         }
+        const tasks = {}
+        res.data.forEach((task) => {
+          const id = task._id
+          tasks[id] = { ...task, id }
+          columns[task.column].taskIds.push(id)
+        })
+        setBoardData({ columns, tasks, columnOrder: ["todo", "in-progress", "done"] })
+      } catch (error) {
+        console.error("Failed to load tasks:", error)
+        setAlert({ show: true, variant: "danger", message: "Failed to load tasks" })
       }
-    }));
-  };
+    }
+    fetchTasks()
+  }, [])
 
-  // FIXED: Delete task from the board
-  const deleteTask = (taskId) => {
-    setBoardData(prev => {
-      // Create new tasks object without the deleted task
-      const newTasks = { ...prev.tasks };
-      delete newTasks[taskId];
-      
-      // Create new columns with the task removed from any column
-      const newColumns = { ...prev.columns };
-      Object.keys(newColumns).forEach(columnId => {
-        newColumns[columnId] = {
-          ...newColumns[columnId],
-          taskIds: newColumns[columnId].taskIds.filter(id => id !== taskId)
-        };
-      });
-      
-      return {
+  const addTask = async (columnId, content) => {
+    try {
+      const token = localStorage.getItem("token")
+      if (token) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+      }
+      const res = await axios.post("/api/tasks", { content, column: columnId })
+      const task = res.data
+      const id = task._id
+      setBoardData((prev) => ({
         ...prev,
-        tasks: newTasks,
-        columns: newColumns
-      };
-    });
-  };
+        tasks: { ...prev.tasks, [id]: { ...task, id } },
+        columns: {
+          ...prev.columns,
+          [columnId]: {
+            ...prev.columns[columnId],
+            taskIds: [...prev.columns[columnId].taskIds, id],
+          },
+        },
+      }))
+    } catch (err) {
+      console.error(err)
+      setAlert({ show: true, variant: "danger", message: "Failed to add task" })
+    }
+  }
+
+  const deleteTask = async (taskId) => {
+    try {
+      const token = localStorage.getItem("token")
+      if (token) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+      }
+      await axios.delete(`/api/tasks/${taskId}`)
+      setBoardData((prev) => {
+        const newTasks = { ...prev.tasks }
+        delete newTasks[taskId]
+        const newColumns = {}
+        for (const [colId, column] of Object.entries(prev.columns)) {
+          newColumns[colId] = {
+            ...column,
+            taskIds: column.taskIds.filter((id) => id !== taskId),
+          }
+        }
+        return {
+          ...prev,
+          tasks: newTasks,
+          columns: newColumns,
+        }
+      })
+    } catch (err) {
+      console.error(err)
+      setAlert({ show: true, variant: "danger", message: "Failed to delete task" })
+    }
+  }
 
   const handleCompleteDay = async () => {
-    if (!user || !user.email) {
-      setAlert({
-        show: true,
-        variant: 'danger',
-        message: 'You must be logged in to complete tasks'
-      });
-      return;
-    }
-
-    const doneTasks = boardData.columns.done.taskIds.map(id => boardData.tasks[id]);
-    
-    if (doneTasks.length === 0) {
-      setAlert({
-        show: true,
-        variant: 'warning',
-        message: 'No tasks in Done column to complete'
-      });
-      return;
-    }
-
-    setIsSending(true);
-    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Clear done tasks
-      setBoardData(prev => {
-        const newTasks = { ...prev.tasks };
-        doneTasks.forEach(task => delete newTasks[task.id]);
-        
+      setIsSending(true)
+      const token = localStorage.getItem("token")
+      if (token) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+      }
+      await axios.post("/api/tasks/complete")
+      setBoardData((prev) => {
+        const newTasks = { ...prev.tasks }
+        prev.columns.done.taskIds.forEach((id) => delete newTasks[id])
         return {
           ...prev,
           tasks: newTasks,
           columns: {
             ...prev.columns,
-            'done': {
-              ...prev.columns.done,
-              taskIds: []
-            }
-          }
-        };
-      });
-      
-      setAlert({
-        show: true,
-        variant: 'success',
-        message: `Completed tasks have been cleared and sent to ${user.email}`
-      });
-    } catch (error) {
-      console.error('Error:', error);
-      setAlert({
-        show: true,
-        variant: 'danger',
-        message: 'Failed to process tasks. Please try again.'
-      });
-    } finally {
-      setIsSending(false);
-      setTimeout(() => setAlert({ show: false }), 5000);
-    }
-  };
-
-  const handleDragStart = (event) => {
-    const { active } = event;
-    setActiveId(active.id);
-    const isTask = !!boardData.tasks[active.id];
-    setActiveType(isTask ? 'task' : 'column');
-  };
-
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-    
-    if (!over) {
-      setActiveId(null);
-      setActiveType(null);
-      return;
-    }
-
-    if (activeType === 'column') {
-      if (active.id !== over.id) {
-        setBoardData(prev => {
-          const oldIndex = prev.columnOrder.indexOf(active.id);
-          const newIndex = prev.columnOrder.indexOf(over.id);
-          return {
-            ...prev,
-            columnOrder: arrayMove(prev.columnOrder, oldIndex, newIndex),
-          };
-        });
-      }
-    }
-    else if (activeType === 'task') {
-      if (active.id !== over.id) {
-        const sourceColumn = Object.values(boardData.columns).find(
-          col => col.taskIds.includes(active.id)
-        );
-        const destColumn = Object.values(boardData.columns).find(
-          col => col.taskIds.includes(over.id) || col.id === over.id
-        );
-
-        if (sourceColumn && destColumn) {
-          setBoardData(prev => {
-            const newSourceTaskIds = [...sourceColumn.taskIds];
-            const sourceIndex = newSourceTaskIds.indexOf(active.id);
-            newSourceTaskIds.splice(sourceIndex, 1);
-
-            const newDestTaskIds = [...destColumn.taskIds];
-            const destIndex = over.id in prev.tasks 
-              ? newDestTaskIds.indexOf(over.id) 
-              : newDestTaskIds.length;
-            newDestTaskIds.splice(destIndex, 0, active.id);
-
-            return {
-              ...prev,
-              columns: {
-                ...prev.columns,
-                [sourceColumn.id]: {
-                  ...sourceColumn,
-                  taskIds: newSourceTaskIds,
-                },
-                [destColumn.id]: {
-                  ...destColumn,
-                  taskIds: newDestTaskIds,
-                },
-              },
-            };
-          });
+            done: { ...prev.columns.done, taskIds: [] },
+          },
         }
+      })
+      setAlert({ show: true, variant: "success", message: "Done tasks cleared" })
+    } catch (err) {
+      console.log(err)
+      setAlert({ show: true, variant: "danger", message: "Failed to clear done tasks" })
+    } finally {
+      setIsSending(false)
+    }
+  }
+
+  const handleDragStart = ({ active }) => {
+    if (boardData.columnOrder.includes(active.id)) {
+      setActiveType("column")
+    } else if (boardData.tasks[active.id]) {
+      setActiveType("task")
+    } else {
+      setActiveType(null)
+    }
+    setActiveId(active.id)
+  }
+
+  const handleDragEnd = ({ active, over }) => {
+    if (!over) return
+    if (activeType === "column") {
+      if (active.id !== over.id) {
+        const oldIndex = boardData.columnOrder.indexOf(active.id)
+        const newIndex = boardData.columnOrder.indexOf(over.id)
+        const newColumnOrder = arrayMove(boardData.columnOrder, oldIndex, newIndex)
+        setBoardData((prev) => ({
+          ...prev,
+          columnOrder: newColumnOrder,
+        }))
       }
     }
-
-    setActiveId(null);
-    setActiveType(null);
-  };
-
-  const handleDragCancel = () => {
-    setActiveId(null);
-    setActiveType(null);
-  };
+    if (activeType === "task") {
+      const sourceColumn = Object.values(boardData.columns).find((col) => col.taskIds.includes(active.id))
+      const destColumn = Object.values(boardData.columns).find(
+        (col) => col.taskIds.includes(over.id) || col.id === over.id,
+      )
+      if (!sourceColumn || !destColumn) return
+      if (sourceColumn.id === destColumn.id) {
+        const oldIndex = sourceColumn.taskIds.indexOf(active.id)
+        const newIndex = destColumn.taskIds.indexOf(over.id)
+        if (oldIndex !== newIndex) {
+          const newTaskIds = arrayMove(sourceColumn.taskIds, oldIndex, newIndex)
+          setBoardData((prev) => ({
+            ...prev,
+            columns: {
+              ...prev.columns,
+              [sourceColumn.id]: { ...sourceColumn, taskIds: newTaskIds },
+            },
+          }))
+        }
+      } else {
+        const newSourceIds = sourceColumn.taskIds.filter((id) => id !== active.id)
+        const newDestIds = [...destColumn.taskIds]
+        const overIndex = newDestIds.indexOf(over.id)
+        newDestIds.splice(overIndex >= 0 ? overIndex : newDestIds.length, 0, active.id)
+        setBoardData((prev) => ({
+          ...prev,
+          columns: {
+            ...prev.columns,
+            [sourceColumn.id]: { ...sourceColumn, taskIds: newSourceIds },
+            [destColumn.id]: { ...destColumn, taskIds: newDestIds },
+          },
+          tasks: {
+            ...prev.tasks,
+            [active.id]: { ...prev.tasks[active.id], column: destColumn.id },
+          },
+        }))
+        const token = localStorage.getItem("token")
+        if (token) {
+          axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+        }
+        axios.put(`/api/tasks/${active.id}`, { column: destColumn.id }).catch(console.error)
+      }
+    }
+    setActiveId(null)
+    setActiveType(null)
+  }
 
   return (
-    <Container className="py-4">
-      <h1 className="mb-4">Task Board</h1>
-      
-      {alert.show && (
-        <Alert variant={alert.variant} onClose={() => setAlert({ show: false })} dismissible>
-          {alert.message}
-        </Alert>
-      )}
-      
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        onDragCancel={handleDragCancel}
-      >
-        <SortableContext 
-          items={boardData.columnOrder}
-          strategy={horizontalListSortingStrategy}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-800 to-slate-900 p-4">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%239C92AC%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+
+      <div className="relative max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">Task Board</h1>
+          <p className="text-gray-300">Organize and track your tasks</p>
+        </div>
+
+        {/* Alert */}
+        {alert.show && (
+          <div
+            className={`mb-6 backdrop-blur-xl border rounded-xl p-4 flex items-center justify-between ${
+              alert.variant === "success"
+                ? "bg-green-500/10 border-green-500/20 text-green-300"
+                : "bg-red-500/10 border-red-500/20 text-red-300"
+            }`}
+          >
+            <div className="flex items-center">
+              {alert.variant === "success" ? (
+                <CheckCircle className="h-5 w-5 mr-2" />
+              ) : (
+                <AlertCircle className="h-5 w-5 mr-2" />
+              )}
+              <span>{alert.message}</span>
+            </div>
+            <button
+              onClick={() => setAlert({ show: false })}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+
+        {/* Kanban Board */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
         >
-          <Row className="flex-nowrap overflow-auto pb-3" style={{ minHeight: '70vh' }}>
-            {boardData.columnOrder.map(columnId => {
-              const column = boardData.columns[columnId];
-              const tasks = column.taskIds.map(taskId => ({
-                ...boardData.tasks[taskId],
-                id: taskId
-              }));
-              
-              return (
-                <Col key={column.id} xs={12} md={4} className="d-flex">
-                  <SortableColumn 
-                    id={column.id}
-                    title={column.title}
-                    tasks={tasks}
-                    isDragging={activeId === column.id}
-                    addTask={addTask}
-                    deleteTask={deleteTask}
-                    onCompleteDay={handleCompleteDay}
-                    isSending={isSending}
-                  />
-                </Col>
-              );
-            })}
-          </Row>
-        </SortableContext>
+          <SortableContext items={boardData.columnOrder} strategy={horizontalListSortingStrategy}>
+            <div className="flex gap-6 overflow-x-auto pb-4" style={{ minHeight: "70vh" }}>
+              {boardData.columnOrder.map((columnId) => {
+                const column = boardData.columns[columnId]
+                const tasks = column.taskIds.map((id) => ({ ...boardData.tasks[id], id }))
+                return (
+                  <div key={columnId} className="flex-shrink-0 w-80">
+                    <SortableColumn
+                      id={columnId}
+                      title={column.title}
+                      tasks={tasks}
+                      isDragging={activeId === columnId}
+                      addTask={addTask}
+                      deleteTask={deleteTask}
+                      onCompleteDay={handleCompleteDay}
+                      isSending={isSending}
+                      isViewer={isViewer}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          </SortableContext>
+          <DragOverlay dropAnimation={dropAnimationConfig}>
+            {activeType === "task" && boardData.tasks[activeId] ? <TaskCard task={boardData.tasks[activeId]} /> : null}
+          </DragOverlay>
+        </DndContext>
+      </div>
+    </div>
+  )
+}
 
-        <DragOverlay dropAnimation={dropAnimationConfig}>
-          {activeType === 'task' && activeTask ? (
-            <TaskCard task={activeTask} />
-          ) : activeType === 'column' && activeColumn ? (
-            <Card className="mb-3" style={{ width: '18rem' }}>
-              <Card.Header className="d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">{activeColumn.title}</h5>
-                <span className="badge bg-primary rounded-pill">
-                  {activeColumn.taskIds.length}
-                </span>
-              </Card.Header>
-            </Card>
-          ) : null}
-        </DragOverlay>
-      </DndContext>
-    </Container>
-  );
-};
-
-export default Kanban;
+export default Kanban

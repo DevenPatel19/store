@@ -8,8 +8,8 @@ import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.post('/', protect, createBusiness);
+router.post('/', protect,  authorizeRoles("Staff",  "Admin"), createBusiness);
 router.get('/', protect, getBusiness);
-router.put('/', protect, updateBusiness);
+router.put('/', protect, authorizeRoles("Staff",  "Admin"),  updateBusiness);
 
 export default router;

@@ -10,7 +10,7 @@ export const authorizeRoles = (...allowedRoles) => {
     // Check if user has at least one role from allowedRoles
     const hasRole = userRoles.some(role => allowedRoles.includes(role));
     if (!hasRole) {
-      return res.status(403).json({ message: "Forbidden: Insufficient role" });
+      return res.status(403).json({ message: "Insufficient role: Please reach out to Admin or Owner" });
     }
     next();
   };

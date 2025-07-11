@@ -14,6 +14,8 @@ const NavbarCustom = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
+
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -21,6 +23,7 @@ const NavbarCustom = () => {
 
   return (
     <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
+       console.log(user) 
       <Container>
         <Navbar.Brand as={Link} to="/">
           {businessName}

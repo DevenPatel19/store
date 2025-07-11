@@ -14,7 +14,7 @@ const router = express.Router();
 router.post(
   "/",
   protect,
-  authorizeRoles("Viewer", "Staff", "Manager", "Admin"),
+  authorizeRoles("Staff", "Manager", "Admin"),
   createCustomer
 );
 router.get(
@@ -30,13 +30,13 @@ router.get(
 router.put(
   "/:id",
   protect,
-  authorizeRoles("Viewer", "Staff", "Manager", "Admin"),
+  authorizeRoles( "Staff", "Manager", "Admin"),
   updateCustomer
 );
 router.delete(
   "/:id",
   protect,
-  authorizeRoles("Viewer", "Staff", "Manager", "Admin"),
+  authorizeRoles( "Staff", "Manager", "Admin"),
   deleteCustomer
 );
 
