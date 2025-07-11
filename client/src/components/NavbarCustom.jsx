@@ -47,10 +47,8 @@ const NavbarCustom = () => {
                   Todo
                 </Nav.Link>
                 <NavDropdown title="Finance" id="basic-nav-dropdown">
-                  <NavDropdown.Item as={Link} to="/finance">Charts</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/finance/30day">
-                    PDF
-                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/reports">Reports</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/invoices">Invoices</NavDropdown.Item>
                 </NavDropdown>
                 <NavDropdown title="Products" id="basic-nav-dropdown">
                   <NavDropdown.Item as={Link} to="/Products">

@@ -13,6 +13,7 @@ import CustomerManager from "./pages/Customers/CustomerManager.jsx";
 import ViewCustomer from "./pages/Customers/ViewCustomer.jsx";
 import AddCustomer from "./pages/Customers/AddCustomer.jsx";
 import EditCustomer from "./pages/Customers/EditCustomer.jsx";
+import Reports from "./pages/Reports/Reports.jsx";
 import Kanban from "./pages/Todo/Kanban.jsx";
 
 
@@ -45,6 +46,10 @@ function App() {
 
         {/* Protected todo routes */}
         <Route path="/tasks" element={<RequireAuth> <Kanban /> </RequireAuth>} />
+
+         {/* Reports/Finance */}
+  <Route path="/reports" element={<RequireAuth><Reports /></RequireAuth>} />
+  <Route path="/finance" element={<RequireAuth><Reports /></RequireAuth>} />
       </Routes>
       </div>
     </AuthProvider>
