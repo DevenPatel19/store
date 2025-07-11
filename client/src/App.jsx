@@ -22,6 +22,8 @@ function App() {
        <div style={{  position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
               <NavbarCustom />
       </div>
+      <div style={{ marginTop: "56px" }}>
+
       <Routes>
         <Route path='/login' element={<Login />} />
         
@@ -44,6 +46,7 @@ function App() {
         {/* Protected todo routes */}
         <Route path="/tasks" element={<RequireAuth> <Kanban /> </RequireAuth>} />
       </Routes>
+      </div>
     </AuthProvider>
   );
 }
