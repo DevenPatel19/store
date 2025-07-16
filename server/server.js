@@ -6,6 +6,7 @@ import productRoutes from './routes/product.routes.js'
 import customerRoutes from './routes/customer.routes.js'
 import taskRoutes from './routes/tasks.routes.js'
 import reportRoutes from './routes/report.routes.js'
+import invoiceRoutes from './routes/invoices.routes.js'
 import { connectDB } from './config/db.js';
 
 // Load environment variables
@@ -40,6 +41,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/invoices", invoiceRoutes);
 
 
 app.listen(PORT, () => {

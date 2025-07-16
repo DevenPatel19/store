@@ -39,6 +39,7 @@ router.post("/register", async (req, res) => {
 
 // Login
 router.post("/login", async (req, res) => {
+  console.log('BODY RECEIVED:', req.body); // 🔍 Add this for debug
   const { email, password } = req.body;
 
   try {

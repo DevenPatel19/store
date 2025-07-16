@@ -1,56 +1,198 @@
-import NavbarCustom from "./components/NavbarCustom.jsx";
 import { Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthProvider.jsx";
-import RequireAuth from "./utils/RequireAuth.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
-import AddProduct from "./pages/Products/AddProduct.jsx";
-import EditProduct from "./pages/Products/EditProduct.jsx";
-import ShowAllProducts from "./pages/Products/ShowAllProducts.jsx";
-import ViewProduct from "./pages/Products/ViewProducts.jsx";
-import CustomerManager from "./pages/Customers/CustomerManager.jsx";
-import ViewCustomer from "./pages/Customers/ViewCustomer.jsx";
-import AddCustomer from "./pages/Customers/AddCustomer.jsx";
-import EditCustomer from "./pages/Customers/EditCustomer.jsx";
-import Reports from "./pages/Reports/Reports.jsx";
-import Kanban from "./pages/Todo/Kanban.jsx";
+import NavbarCustom from "./components/NavbarCustom"; // Fixed import
+import { AuthProvider } from "./context/AuthProvider";
+import RequireAuth from "./utils/RequireAuth";
 
+// Main pages
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Reports from "./pages/Reports/Reports";
+import Kanban from "./pages/Todo/Kanban";
+
+// Product pages
+import {
+  AddProduct,
+  EditProduct,
+  ShowAllProducts,
+  ViewProduct,
+} from "./pages/Products";
+
+// Customer pages
+import {
+  CustomerManager,
+  ViewCustomer,
+  AddCustomer,
+  EditCustomer,
+} from "./pages/Customers";
+
+// Invoice pages
+import {
+  InvoiceManager,
+  ViewInvoice,
+  AddInvoice,
+  EditInvoice,
+} from "./pages/Invoices";
+
+// Protected route wrapper
+const ProtectedRoute = ({ children }) => <RequireAuth>{children}</RequireAuth>;
+
+// Navbar wrapper component
+const NavbarWrapper = () => (
+  <div className="navbar-fixed">
+    <NavbarCustom />
+  </div>
+);
 
 function App() {
   return (
     <AuthProvider>
-       <div style={{  position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
-              <NavbarCustom />
-      </div>
-      <div style={{ marginTop: "56px" }}>
+      <NavbarWrapper />
 
-      <Routes>
-        <Route path='/login' element={<Login />} />
-        
+      <div className="content-container">
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        <Route path='/register' element={<Register />} />
+          {/* Dashboard */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Protect product routes */}
-        <Route path='/' element={<RequireAuth><Dashboard /></RequireAuth>} />
-        <Route path="/products/new" element={<RequireAuth> <AddProduct /> </RequireAuth>}/>
-        <Route path="/products/:id/edit" element={<RequireAuth> <EditProduct /> </RequireAuth> }/>
-        <Route path="/products/:id" element={ <RequireAuth> <ViewProduct /> </RequireAuth> }/>
-        <Route path="/products" element={ <RequireAuth> <ShowAllProducts /> </RequireAuth> } />
+          {/* Product Routes */}
+          <Route path="/products">
+            <Route
+              index
+              element={
+                <ProtectedRoute>
+                  <ShowAllProducts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="new"
+              element={
+                <ProtectedRoute>
+                  <AddProduct />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path=":id"
+              element={
+                <ProtectedRoute>
+                  <ViewProduct />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path=":id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditProduct />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
 
-        {/* Protect customer routes */}
-        <Route path="/customers/new" element={ <RequireAuth> <AddCustomer /> </RequireAuth> } />
-        <Route path="/customers/:id/edit" element={ <RequireAuth> <EditCustomer /> </RequireAuth> } />
-        <Route path="/customers/:id" element={ <RequireAuth> <ViewCustomer /> </RequireAuth> } />
-        <Route path="/customers" element={ <RequireAuth> <CustomerManager /> </RequireAuth> } />
+          {/* Customer Routes */}
+          <Route path="/customers">
+            <Route
+              index
+              element={
+                <ProtectedRoute>
+                  <CustomerManager />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="new"
+              element={
+                <ProtectedRoute>
+                  <AddCustomer />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path=":id"
+              element={
+                <ProtectedRoute>
+                  <ViewCustomer />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path=":id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditCustomer />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
 
-        {/* Protected todo routes */}
-        <Route path="/tasks" element={<RequireAuth> <Kanban /> </RequireAuth>} />
+          {/* Task Management */}
+          <Route
+            path="/tasks"
+            element={
+              <ProtectedRoute>
+                <Kanban />
+              </ProtectedRoute>
+            }
+          />
 
-         {/* Reports/Finance */}
-  <Route path="/reports" element={<RequireAuth><Reports /></RequireAuth>} />
-  <Route path="/finance" element={<RequireAuth><Reports /></RequireAuth>} />
-      </Routes>
+          {/* Reports */}
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Invoice Routes */}
+          <Route path="/invoices">
+            <Route
+              index
+              element={
+                <ProtectedRoute>
+                  <InvoiceManager />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices/new"
+              element={
+                <ProtectedRoute>
+                  <AddInvoice />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices/:id"
+              element={
+                <ProtectedRoute>
+                  <ViewInvoice />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditInvoice />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+        </Routes>
       </div>
     </AuthProvider>
   );

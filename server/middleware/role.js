@@ -6,7 +6,7 @@ export const authorizeRoles = (...allowedRoles) => {
     }
 
     const userRoles = req.user.roles || [""];
-
+    
     // Check if user has at least one role from allowedRoles
     const hasRole = userRoles.some(role => allowedRoles.includes(role));
     if (!hasRole) {
