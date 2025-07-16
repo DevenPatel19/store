@@ -6,7 +6,7 @@ import {
   createInvoice,
   updateInvoice,
   deleteInvoice,
-} from "../controllers/invoices.controller.js";
+} from "../controllers/invoice.controller.js";
 import { protect } from "../middleware/auth.js";
 import { authorizeRoles } from "../middleware/role.js";
 

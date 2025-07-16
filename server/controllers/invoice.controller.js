@@ -1,5 +1,6 @@
 import Invoice from "../models/invoice.model.js";
 
+
 // Get all invoices
 export const getAllInvoices = async (req, res) => {
   try {
@@ -25,12 +26,35 @@ export const getInvoiceById = async (req, res) => {
 
 // Create new invoice
 export const createInvoice = async (req, res) => {
-  const { customer, amount, status, paidDate } = req.body;
+  const {
+    invoiceNumber,
+    customer,
+    date,
+    dueDate,
+    items,
+    subtotal,
+    taxRate,
+    tax,
+    amount,
+    notes,
+    terms,
+    status,
+    paidDate,
+  } = req.body;
 
   const invoice = new Invoice({
+    invoiceNumber,
     customer,
+    date,
+    dueDate,
+    items,
+    subtotal,
+    taxRate,
+    tax,
     amount,
-    status,
+    notes,
+    terms,
+    status: status || "Unpaid",
     paidDate,
   });
 
@@ -41,6 +65,7 @@ export const createInvoice = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 // Update invoice partially
 export const updateInvoice = async (req, res) => {

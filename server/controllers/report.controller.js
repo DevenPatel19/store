@@ -1,5 +1,6 @@
 import Invoice from "../models/invoice.model.js";
-import Task from "../models/Tasks.model.js";
+
+import Task from "../models/tasks.model.js";
 
 export const getFinancialSummary = async (req, res) => {
   try {

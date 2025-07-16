@@ -1,6 +1,6 @@
 // controllers/taskController.js
-import Task from '../models/Tasks.model.js';
-import User from '../models/User.model.js';
+import Task from '../models/tasks.model.js';
+import User from '../models/user.model.js';
 
 // Create Task
 export const createTask = async (req, res) => {
