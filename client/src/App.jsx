@@ -56,8 +56,7 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           {/* Dashboard */}
-          <Route
-            path="/"
+          <Route path="/"
             element={
               <ProtectedRoute>
                 <Dashboard />
@@ -138,8 +137,7 @@ function App() {
           </Route>
 
           {/* Task Management */}
-          <Route
-            path="/tasks"
+          <Route path="/tasks"
             element={
               <ProtectedRoute>
                 <Kanban />

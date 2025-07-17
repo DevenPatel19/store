@@ -67,18 +67,15 @@ export const createInvoice = async (req, res) => {
 };
 
 
-// Update invoice partially
+// Update Invoice (patch-style)
 export const updateInvoice = async (req, res) => {
   try {
-    const invoice = await Invoice.findById(req.params.id);
-    if (!invoice) return res.status(404).json({ message: "Invoice not found" });
-
-    if (req.body.customer !== undefined) invoice.customer = req.body.customer;
-    if (req.body.amount !== undefined) invoice.amount = req.body.amount;
-    if (req.body.status !== undefined) invoice.status = req.body.status;
-    if (req.body.paidDate !== undefined) invoice.paidDate = req.body.paidDate;
-
-    const updatedInvoice = await invoice.save();
+    const updatedInvoice = await Invoice.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    if (!updatedInvoice) return res.status(404).json({ message: "Invoice not found" });
     res.json(updatedInvoice);
   } catch (error) {
     res.status(400).json({ message: error.message });

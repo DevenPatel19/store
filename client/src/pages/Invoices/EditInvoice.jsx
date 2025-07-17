@@ -1,9 +1,13 @@
-import React from 'react'
+// src/pages/EditInvoice.jsx
+import React from "react";
+import { useParams } from "react-router-dom";
+import InvoiceForm from "../../components/Invoiceform";
 
 const EditInvoice = () => {
-  return (
-    <div>EditInvoice</div>
-  )
-}
+  const { id } = useParams(); // ✅ this replaces match.params.id
 
-export default EditInvoice
+  return <InvoiceForm mode="edit" id={id} />;
+};
+
+export default EditInvoice;
+

@@ -1,60 +1,29 @@
 import mongoose from "mongoose";
 
-const productSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
+const invoiceSchema = new mongoose.Schema({
+  customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", required: true },
+  invoiceNumber: { type: String, required: true, unique: true },
+  date: { type: Date, required: true },
+  dueDate: { type: Date, required: true },
+  items: [
+    {
+      product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
+      description: { type: String, required: true },  // Store product name for snapshot
+      quantity: { type: Number, required: true, min: 1 },
+      rate: { type: Number, required: true, min: 0 }, // Price at time of invoice
+      amount: { type: Number, required: true, min: 0 },
     },
-    sku:        // Was in an array however that impedes uniueness checking
-      {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-      },
-    
-    barcodes: {
-      type: String,
-      required: false,  // optional if based on SKU
-      unique: true,
-      sparse: true,   // allows nulls
-    },
-    quantity: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 0,
-    },
-    threshold: {
-      type: Number,
-      default: 5,   // Low-stock alert threshold
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    category: {
-      type: String,
-      default: 'General1',
-    },
-    photoUrl: {
-      type: String,
-      default: '',
-    },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    }
-  },
-  {
-    timestamps: true, // AUTO createdAt & updatedAt logged
-  }
-);
+  ],
+  subtotal: { type: Number, required: true, min: 0 },
+  taxRate: { type: Number, default: 0 }, // percentage e.g., 10 for 10%
+  tax: { type: Number, required: true, min: 0 },
+  amount: { type: Number, required: true, min: 0 }, // total amount (subtotal + tax)
+  notes: { type: String },
+  terms: { type: String },
+  status: { type: String, enum: ["Paid", "Unpaid", "Pending", "Overdue"], default: "Unpaid" },
+  paidDate: { type: Date },
+}, { timestamps: true });
 
-const Product = mongoose.model("Product", productSchema);
+const Invoice = mongoose.models.Invoice || mongoose.model("Invoice", invoiceSchema);
 
-export default Product;
+export default Invoice;

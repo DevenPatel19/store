@@ -7,10 +7,11 @@ const invoiceSchema = new mongoose.Schema({
   dueDate: { type: Date, required: true },
   items: [
     {
+      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" }, // new field
       description: String,
-      quantity: Number,
-      price: Number,
-      amount: Number,
+      quantity: { type: Number, default: 1 },
+      rate: { type: Number, default: 0 },
+      amount: { type: Number, default: 0 },
     },
   ],
   subtotal: { type: Number, required: true, min: 0 },

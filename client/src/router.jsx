@@ -83,6 +83,14 @@ const AppRouter = () => {
             <Route path=":id" element={<ProtectedRoute><ViewInvoices /></ProtectedRoute>} />
             <Route path=":id/edit" element={<ProtectedRoute><EditInvoices /></ProtectedRoute>} />
           </Route>
+
+          {/* Finance Routes */}
+          <Route path="/invoices">
+            <Route index element={<ProtectedRoute><Invoices /></ProtectedRoute>} />
+            <Route path="create" element={<ProtectedRoute><AddInvoices /></ProtectedRoute>} />
+            <Route path=":id" element={<ProtectedRoute><ViewInvoices /></ProtectedRoute>} />
+            <Route path=":id/edit" element={<ProtectedRoute><EditInvoices /></ProtectedRoute>} />
+          </Route>
         </Routes>
       </div>
     </AuthProvider>

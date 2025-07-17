@@ -71,7 +71,7 @@ const Dashboard = () => {
                 </Link>
 
                 <Link
-                  to="/finance"
+                  to="/reports"
                   className="group backdrop-blur-xl bg-white/10 border border-white/20 rounded-xl p-4 hover:bg-white/15 hover:border-white/30 transition-all duration-200 transform hover:scale-105"
                 >
                   <div className="flex items-center">
@@ -86,7 +86,7 @@ const Dashboard = () => {
                 </Link>
 
                 <Link
-                  to="/payment/invoice/new"
+                  to="/invoices"
                   className="group backdrop-blur-xl bg-white/10 border border-white/20 rounded-xl p-4 hover:bg-white/15 hover:border-white/30 transition-all duration-200 transform hover:scale-105"
                 >
                   <div className="flex items-center">
