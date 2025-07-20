@@ -286,7 +286,8 @@ const InvoiceForm = ({ mode = "add", id }) => {
               <select
                 value={formData.status}
                 onChange={(e) => handleInputChange("status", e.target.value)}
-                className="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white"
+                className="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+
               >
                 <option value="Pending">Pending</option>
                 <option value="Paid">Paid</option>
@@ -329,7 +330,8 @@ const InvoiceForm = ({ mode = "add", id }) => {
               <select
                 value={selectedCustomerId}
                 onChange={(e) => handleCustomerSelect(e.target.value)}
-                className="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white"
+                className="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+
               >
                 <option value="">Select a customer...</option>
                 {customers.map((customer) => (
@@ -424,7 +426,8 @@ const InvoiceForm = ({ mode = "add", id }) => {
                     <select
                       value={item.productId || ""}
                       onChange={(e) => handleProductSelect(index, e.target.value)}
-                      className="w-full p-2 rounded-lg bg-white/20 border border-white/30 text-white placeholder-gray-400 text-sm"
+                      className="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+
                     >
                       <option value="">Select a product...</option>
                       {products.map((product) => (

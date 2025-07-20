@@ -18,3 +18,8 @@
   padding-top: 60px; /* equal or more than navbar height */
   z-index: 1100;
 }
+
+ select option {
+  color: white;
+  background-color: #566697;
+}
